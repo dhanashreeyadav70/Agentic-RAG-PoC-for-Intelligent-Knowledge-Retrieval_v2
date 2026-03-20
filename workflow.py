@@ -1,6 +1,6 @@
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
-from src.agents import *
+from agents import *
 
 class RAGState(TypedDict):
     query: str
