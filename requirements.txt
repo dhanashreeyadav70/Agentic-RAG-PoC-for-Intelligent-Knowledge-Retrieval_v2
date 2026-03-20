@@ -1,0 +1,14 @@
+﻿streamlit
+langchain
+langchain-core
+langchain-community
+langgraph
+chromadb
+sentence-transformers
+rank-bm25
+groq
+numpy
+unstructured
+faiss-cpu
+sentence-transformers
+langchain-text-splitters
