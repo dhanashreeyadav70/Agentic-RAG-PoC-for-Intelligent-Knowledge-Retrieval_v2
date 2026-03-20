@@ -1,6 +1,6 @@
 import os
 from groq import Groq
-from src.prompt_builder import build_dynamic_prompt
+from prompt_builder import build_dynamic_prompt
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
