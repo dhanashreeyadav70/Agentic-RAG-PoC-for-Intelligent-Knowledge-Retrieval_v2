@@ -9,7 +9,7 @@ from workflow import build_graph
 
 st.set_page_config(page_title="AI Assistant", layout="wide")
 
-st.title("🧠 AI Assistant (RAG + Memory)")
+st.title("🧠 Agentic RAG PoC for Intelligent Knowledge Retrieval")
 
 # -------------------------------
 # SESSION STATE
