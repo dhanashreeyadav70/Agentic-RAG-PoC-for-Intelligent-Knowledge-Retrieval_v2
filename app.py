@@ -1,11 +1,11 @@
 import streamlit as st
 import tempfile
 
-from src.file_loader import load_file
-from src.chunker import split_documents
-from src.vector_store import create_vector_store
-from src.retrieval import HybridRetriever
-from src.workflow import build_graph
+from file_loader import load_file
+from chunker import split_documents
+from vector_store import create_vector_store
+from retrieval import HybridRetriever
+from workflow import build_graph
 
 st.set_page_config(page_title="AI Assistant", layout="wide")
 
