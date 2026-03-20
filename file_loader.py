@@ -4,7 +4,7 @@ from langchain_community.document_loaders import (
     PyPDFLoader, TextLoader, Docx2txtLoader, UnstructuredHTMLLoader
 )
 from langchain_core.documents import Document
-from src.ingestion import load_json
+from ingestion import load_json
 
 
 def load_file(file_path, filename):
