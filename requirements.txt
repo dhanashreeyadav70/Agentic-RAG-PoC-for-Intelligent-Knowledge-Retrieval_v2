@@ -12,3 +12,4 @@ unstructured
 faiss-cpu
 sentence-transformers
 langchain-text-splitters
+docx2txt
