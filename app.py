@@ -31,22 +31,22 @@ uploaded_file = st.file_uploader(
     type=["pdf","docx","txt","csv","json","html","png","jpg","jpeg","mp3","wav","mp4","avi"]
 )
 
-if uploaded_file:
+# if uploaded_file:
 
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        tmp.write(uploaded_file.read())
-        file_path = tmp.name
+#     with tempfile.NamedTemporaryFile(delete=False) as tmp:
+#         tmp.write(uploaded_file.read())
+#         file_path = tmp.name
 
-    docs = load_file(file_path, uploaded_file.name)
-    docs = split_documents(docs)
+#     docs = load_file(file_path, uploaded_file.name)
+#     docs = split_documents(docs)
 
-    vector_db = create_vector_store(docs, uploaded_file.name)
-    retriever = HybridRetriever(docs, vector_db)
+#     vector_db = create_vector_store(docs, uploaded_file.name)
+#     retriever = HybridRetriever(docs, vector_db)
 
-    # ✅ overwrite retriever (single active KB)
-    st.session_state.retriever = retriever
+#     # ✅ overwrite retriever (single active KB)
+#     st.session_state.retriever = retriever
 
-    st.success(f"{uploaded_file.name} loaded successfully")
+#     st.success(f"{uploaded_file.name} loaded successfully")
 
 # -------------------------------
 # CHAT INPUT
@@ -77,6 +77,45 @@ if query:
             "user": query,
             "assistant": answer
         })
+
+import streamlit as st
+import os
+from file_loader import load_file
+
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+st.set_page_config(page_title="Multi-Modal RAG Loader", layout="wide")
+
+st.title("📂 Multi-Modal File Upload & Processing")
+
+uploaded_file = st.file_uploader(
+    "Upload any file",
+    type=[
+        "pdf","docx","txt","csv","json","html","htm",
+        "png","jpg","jpeg",
+        "mp3","wav",
+        "mp4","avi","mpeg4"
+    ]
+)
+
+if uploaded_file:
+    file_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
+
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    st.success("File uploaded successfully ✅")
+
+    try:
+        with st.spinner("Processing file..."):
+            docs = load_file(file_path, uploaded_file.name)
+
+        st.subheader("📄 Extracted Content")
+        st.write(docs[0]["page_content"][:3000])
+
+    except Exception as e:
+        st.error(f"❌ Error: {str(e)}")
 
 # -------------------------------
 # DISPLAY CHAT HISTORY
