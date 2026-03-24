@@ -8,9 +8,7 @@ from ingestion import load_json
 
 
 def load_file(file_path, filename):
-
     ext = os.path.splitext(filename)[1].lower()
-
     if ext == ".pdf":
         return PyPDFLoader(file_path).load()
 
