@@ -8,60 +8,58 @@ from ingestion import load_json
 
 
 def load_file(file_path, filename):
+
     ext = os.path.splitext(filename)[1].lower()
 
-     if ext == ".pdf":
-         return PyPDFLoader(file_path).load()
+    if ext == ".pdf":
+        return PyPDFLoader(file_path).load()
 
-     elif ext == ".txt":
-         return TextLoader(file_path).load()
+    elif ext == ".txt":
+        return TextLoader(file_path).load()
 
-     elif ext == ".docx":
-         return Docx2txtLoader(file_path).load()
+    elif ext == ".docx":
+        return Docx2txtLoader(file_path).load()
 
-     elif ext == ".html":
-         return UnstructuredHTMLLoader(file_path).load()
+    elif ext == ".html":
+        return UnstructuredHTMLLoader(file_path).load()
 
-     elif ext == ".json":
-         return load_json(file_path)
+    elif ext == ".json":
+        return load_json(file_path)
 
-     # ⭐ FIXED CSV HANDLING
-     elif ext == ".csv":
+    # ⭐ FIXED CSV HANDLING
+    elif ext == ".csv":
 
-         df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path)
 
-         documents = []
+        documents = []
 
-         # ✅ Dataset-level understanding
-         summary = f"""
- This dataset represents an employee directory.
+        # ✅ Dataset-level understanding
+        summary = f"""
+This dataset represents an employee directory.
 
- Columns: {', '.join(df.columns)}
+Columns: {', '.join(df.columns)}
 
- This dataset contains structured employee information used for HR, reporting, and organizational analysis.
- """
+This dataset contains structured employee information used for HR, reporting, and organizational analysis.
+"""
 
-         documents.append(Document(
-             page_content=summary,
-             metadata={"source": filename, "type": "summary"}
-         ))
+        documents.append(Document(
+            page_content=summary,
+            metadata={"source": filename, "type": "summary"}
+        ))
 
-         # ✅ Row-level semantic conversion
-         for _, row in df.iterrows():
+        # ✅ Row-level semantic conversion
+        for _, row in df.iterrows():
 
-             row_text = ", ".join([
-                 f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col])
-             ])
+            row_text = ", ".join([
+                f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col])
+            ])
 
-             documents.append(Document(
-                 page_content=f"Employee record: {row_text}",
-                 metadata={"source": filename, "type": "row"}
-             ))
+            documents.append(Document(
+                page_content=f"Employee record: {row_text}",
+                metadata={"source": filename, "type": "row"}
+            ))
 
-         return documents
+        return documents
 
-     else:
-         raise ValueError(f"Unsupported file type: {ext}")
-        "page_content": text,
-        "metadata": {"source": source}
-    }]
+    else:
+        raise ValueError(f"Unsupported file type: {ext}")
