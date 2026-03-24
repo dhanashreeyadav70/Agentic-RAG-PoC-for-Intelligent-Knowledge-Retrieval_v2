@@ -13,3 +13,15 @@ faiss-cpu
 sentence-transformers
 langchain-text-splitters
 docx2txt
+streamlit
+pandas
+python-docx
+beautifulsoup4
+pytesseract
+Pillow
+moviepy
+openai-whisper
+ffmpeg-python
+PyPDF2
+ffmpeg
+tesseract-ocr
