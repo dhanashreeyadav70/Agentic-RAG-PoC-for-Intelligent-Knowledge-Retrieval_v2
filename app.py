@@ -78,7 +78,6 @@ if query:
             "assistant": answer
         })
 
-
 # -------------------------------
 # DISPLAY CHAT HISTORY
 # -------------------------------
