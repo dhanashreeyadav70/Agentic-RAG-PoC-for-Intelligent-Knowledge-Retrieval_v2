@@ -13,3 +13,8 @@ faiss-cpu
 sentence-transformers
 langchain-text-splitters
 docx2txt
+pytesseract
+Pillow
+opencv-python
+whisper
+ffmpeg-python
