@@ -42,5 +42,4 @@ class HybridRetriever:
 
         return final_docs[:k]
 
-        if "audio" in query.lower():
-            boost audio docs
+   
