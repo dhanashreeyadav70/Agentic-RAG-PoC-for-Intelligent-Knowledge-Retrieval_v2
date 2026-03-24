@@ -28,7 +28,7 @@ if "graph" not in st.session_state:
 # -------------------------------
 uploaded_file = st.file_uploader(
     "Upload file (text, image, audio, video)",
-    type=["pdf","docx","txt","csv","json","html","png","jpg","jpeg","mp3","wav","mp4","avi"]
+    type=["pdf","docx","txt","csv","json","html"]
 )
 
 if uploaded_file:
