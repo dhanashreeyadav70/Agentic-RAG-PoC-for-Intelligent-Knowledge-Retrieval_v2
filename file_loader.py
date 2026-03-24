@@ -62,12 +62,11 @@
 #     else:
 #         raise ValueError(f"Unsupported file type: {ext}")
 
+
 import os
 import pandas as pd
-import pytesseract
 from PIL import Image
-import whisper
-import ffmpeg
+import pytesseract
 
 from langchain_community.document_loaders import (
     PyPDFLoader, TextLoader, Docx2txtLoader, UnstructuredHTMLLoader
@@ -76,18 +75,15 @@ from langchain_core.documents import Document
 from ingestion import load_json
 
 
-# -------------------------------
-# LOAD SPEECH MODEL (once)
-# -------------------------------
-whisper_model = whisper.load_model("base")
-
-
 def load_file(file_path, filename):
 
-    ext = os.path.splitext(filename)[1].lower()
+    ext = os.path.splitext(filename)[1].lower().strip()
+
+    print("📂 Processing file:", filename)
+    print("🔍 Detected extension:", ext)
 
     # -------------------------------
-    # TEXT FILES
+    # 📄 DOCUMENT FILES
     # -------------------------------
     if ext == ".pdf":
         return PyPDFLoader(file_path).load()
@@ -105,7 +101,7 @@ def load_file(file_path, filename):
         return load_json(file_path)
 
     # -------------------------------
-    # CSV (Already Good)
+    # 📊 CSV FILE
     # -------------------------------
     elif ext == ".csv":
 
@@ -114,7 +110,7 @@ def load_file(file_path, filename):
 
         summary = f"""
 Dataset with columns: {', '.join(df.columns)}
-Contains structured data for analysis.
+Contains structured data.
 """
 
         documents.append(Document(
@@ -135,46 +131,68 @@ Contains structured data for analysis.
         return documents
 
     # -------------------------------
-    # 🖼️ IMAGE → OCR
+    # 🖼️ IMAGE FILES (PNG, JPG, JPEG)
     # -------------------------------
     elif ext in [".png", ".jpg", ".jpeg"]:
 
-        image = Image.open(file_path)
-        text = pytesseract.image_to_string(image)
+        try:
+            image = Image.open(file_path)
+            text = pytesseract.image_to_string(image)
+
+            if not text.strip():
+                text = "No readable text found in image."
+
+        except Exception as e:
+            text = f"Image processing failed: {str(e)}"
 
         return [Document(
-            page_content=text,
+            page_content=f"Image Content:\n{text}",
             metadata={"source": filename, "type": "image"}
         )]
 
     # -------------------------------
-    # 🎧 AUDIO → SPEECH TO TEXT
+    # 🎧 AUDIO FILES (SAFE FALLBACK)
     # -------------------------------
     elif ext in [".mp3", ".wav"]:
 
-        result = whisper_model.transcribe(file_path)
-        text = result["text"]
-
         return [Document(
-            page_content=text,
+            page_content=f"""
+Audio file detected: {filename}
+
+⚠️ Audio transcription is not supported in this deployment.
+Please upload transcript or run locally for full support.
+""",
             metadata={"source": filename, "type": "audio"}
         )]
 
     # -------------------------------
-    # 🎥 VIDEO → AUDIO → TEXT
+    # 🎥 VIDEO FILES (SAFE FALLBACK)
     # -------------------------------
     elif ext in [".mp4", ".avi"]:
+
         return [Document(
-        page_content=f"""
-This is a video file: {filename}
+            page_content=f"""
+Video file detected: {filename}
 
 ⚠️ Video processing is not supported in this environment.
-
-Please extract audio or provide transcript for analysis.
+Please upload transcript or extract audio.
 """,
-        metadata={"source": filename, "type": "video"}
-    )]
+            metadata={"source": filename, "type": "video"}
+        )]
 
     # -------------------------------
+    # ❌ UNKNOWN FILE TYPE (NO CRASH)
+    # -------------------------------
     else:
-        raise ValueError(f"Unsupported file type: {ext}")
+
+        return [Document(
+            page_content=f"""
+Unsupported file type: {ext}
+
+Filename: {filename}
+
+System currently supports:
+PDF, DOCX, TXT, CSV, JSON, HTML, PNG, JPG, JPEG, MP3, WAV, MP4, AVI
+""",
+            metadata={"source": filename, "type": "unknown"}
+        )]
