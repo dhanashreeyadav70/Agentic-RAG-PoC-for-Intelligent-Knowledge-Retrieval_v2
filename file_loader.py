@@ -164,19 +164,16 @@ Contains structured data for analysis.
     # 🎥 VIDEO → AUDIO → TEXT
     # -------------------------------
     elif ext in [".mp4", ".avi"]:
-
-        audio_path = file_path + ".wav"
-
-        # Extract audio
-        ffmpeg.input(file_path).output(audio_path).run(overwrite_output=True)
-
-        result = whisper_model.transcribe(audio_path)
-        text = result["text"]
-
         return [Document(
-            page_content=text,
-            metadata={"source": filename, "type": "video"}
-        )]
+        page_content=f"""
+This is a video file: {filename}
+
+⚠️ Video processing is not supported in this environment.
+
+Please extract audio or provide transcript for analysis.
+""",
+        metadata={"source": filename, "type": "video"}
+    )]
 
     # -------------------------------
     else:
